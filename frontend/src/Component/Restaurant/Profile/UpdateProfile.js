@@ -29,13 +29,18 @@ function RUpdateprofile() {
   const [delivery_method, setdelivery_method] = useState('')
   const [selectedFile, setselectedFile] = useState([]);
 
-  const uploadToS3 = async (file, signedRequest) => {
-    const options = {
-      headers: {
-        "Content-Type": file.type
-      }
-    };
-    await axios.put(signedRequest, file, options)
+  const uploadToS3 = async (signedFiles) => {
+
+    const promises = []
+    signedFiles.forEach(e => {
+      const options = {
+        headers: {
+          "Content-Type": e[1].type
+        }
+      };
+      promises.push(axios.put(e[0], e[1], options))
+    })
+    await Promise.all(promises)
   };
 
   const onUpload = (e) => {
@@ -44,16 +49,24 @@ function RUpdateprofile() {
 
   const updateProfile = async (e) => {
     e.preventDefault()
-    const response = await sign({
-      variables: {
-        filename: selectedFile[0].name,
-        filetype: selectedFile[0].type
-      }
-    }).catch(e => {
-      console.log(e)
-    })
-    const { url, signedRequest } = response.data.signS3
-    await uploadToS3(selectedFile[0], signedRequest)
+    const signedFiles = []
+    const urls = []
+    var i
+    for (i = 0; i < selectedFile.length; i++) {
+      const response = await sign({
+        variables: {
+          filename: selectedFile[i].name,
+          filetype: selectedFile[i].type
+        }
+      }).catch(e => {
+        console.log(e)
+      })
+      const { url, signedRequest } = response.data.signS3
+      signedFiles.push([signedRequest, selectedFile[i]])
+      urls.push(url)
+    }
+    await uploadToS3(signedFiles).catch(err => console.log("Error", err))
+    console.log(urls)
     await restUpdate({
       variables: {
         id: localStorage.getItem('restaurant_id'),
@@ -70,7 +83,10 @@ function RUpdateprofile() {
         modeofdelivery,
         delivery_method,
         website,
-        path: url
+        path: urls[0] || "",
+        path1: urls[1] || "",
+        path2: urls[2] || "",
+        path3: urls[3] || ""
       }
     })
 

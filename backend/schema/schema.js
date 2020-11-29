@@ -433,6 +433,9 @@ const Mutation = new GraphQLObjectType({
                 delivery_method: { type: new GraphQLNonNull(GraphQLString) },
                 website: { type: new GraphQLNonNull(GraphQLString) },
                 path: { type: new GraphQLNonNull(GraphQLString) },
+                path1: { type: new GraphQLNonNull(GraphQLString) },
+                path2: { type: new GraphQLNonNull(GraphQLString) },
+                path3: { type: new GraphQLNonNull(GraphQLString) },
             },
             resolve(parent, args, context) {
                 if (context.payload.loggedIn) {
@@ -453,7 +456,10 @@ const Mutation = new GraphQLObjectType({
                             lng: args.lng,
                             modeofdelivery: args.modeofdelivery,
                             delivery_method: args.delivery_method,
-                            path: args.path
+                            path: args.path,
+                            path1: args.path1,
+                            path2: args.path2,
+                            path3: args.path3
                         },
                         { new: true }, (error, results) => {
                             if (error) {
@@ -482,11 +488,11 @@ const Mutation = new GraphQLObjectType({
             resolve(parent, args, context) {
                 if (context.payload.loggedIn) {
 
-                    var objData = { itemname: args.itemname, price: args.price, description: args.description, path: args.path1, itemcategory: args.itemcategory, Ingredients: args.ingredients };
+                    var objData = { itemname: args.itemname, price: args.price, item_description: args.item_description, path: args.path, itemcategory: args.itemcategory,quantity: args.quantity, Ingredients: args.Ingredients };
                     // Adding multiple same entries, can do anndiotnal validation (optional)
                     return Restaurant.findOneAndUpdate(
                         { _id: args.restaurant_id },
-                        { $push: { menu: objData } },
+                        { $addToSet: { menu: objData } },
                         (error, results) => {
                             if (error) {
                                 return error
@@ -562,7 +568,7 @@ const Mutation = new GraphQLObjectType({
                 nick_name: { type: GraphQLString },
                 headline: { type: GraphQLString },
             },
-            resolve(parent, args) {
+            resolve(parent, args, context) {
                 if (context.payload.loggedIn) {
                     return User.findByIdAndUpdate(
                         { _id: args.id },
@@ -613,7 +619,7 @@ const Mutation = new GraphQLObjectType({
                 user_id: { type: new GraphQLNonNull(GraphQLID) },
                 email: { type: new GraphQLNonNull(GraphQLString) },
             },
-            resolve(parent, args) {
+            resolve(parent,args, context) {
                 if (context.payload.loggedIn) {
 
                     var objData = { review_desc: args.review_desc, rating: args.rating, path: args.path, order_id: args.order_id, user_id: args.user_id, email: args.email };
@@ -640,7 +646,7 @@ const Mutation = new GraphQLObjectType({
                 _id: { type: new GraphQLNonNull(GraphQLID) },
                 orderstatus: { type: new GraphQLNonNull(GraphQLString) }
             },
-            async resolve(parent, args) {
+            async resolve(parent, args, context) {
                 if (context.payload.loggedIn) {
                     let updateOrder = await Order.updateOne({ _id: args._id }, { orderstatus: args.orderstatus }, { new: true }, (error, results) => {
                         if (error) {
@@ -666,7 +672,7 @@ const Mutation = new GraphQLObjectType({
                 user_id: { type: GraphQLID },
                 deliverymode: { type: GraphQLString },
             },
-            async resolve(parent, args) {
+            async resolve(parent, args, context) {
                 if (context.payload.loggedIn) {
 
                     let createOrder = await Order.updateOne({ _id: args._id, "cart.user_id": args.user_id },
@@ -701,13 +707,13 @@ const Mutation = new GraphQLObjectType({
                 path: { type: GraphQLString },
                 restaurant_name: { type: GraphQLString }
             },
-            async resolve(parent,context, args) {
+            async resolve(parent, args, context) {
                 if (context.payload.loggedIn) {
 
                     var ObjData = { itemname: args.itemname, itemid: args._id, price: args.price, path: args.path, cartstatus: "New", user_id: args.user_id, restaurant_id: args.restaurant_id, restaurant_name: args.restaurant_name, user_name: args.user_name }
                     return Order.findOneAndUpdate(
                         { user_id: args.user_id, restaurant_id: args.restaurant_id, orderstatus: " " },
-                        { restaurant_id: args.restaurant_id, user_name: args.user_name, orderstatus: " ", $push: { cart: ObjData } }, { upsert: true }, (error, results) => {
+                        { restaurant_id: args.restaurant_id, user_name: args.user_name, orderstatus: " ", $addToSet: { cart: ObjData } }, { upsert: true }, (error, results) => {
                             if (error) {
                                 return error
                             } else {
@@ -728,9 +734,9 @@ const Mutation = new GraphQLObjectType({
             async resolve(parent, args) {
                     const s3 = new aws.S3({
                         signatureVersion: 'v4',
-                        region: 'us-east-1',
                         secretAccessKey: "0am/9n/qQMhH4NnBJBasYvoM8enIMta/FirpNhAf",
                         accessKeyId: "AKIAIX7RODER3FW5UBIA",
+                        region: "us-east-1",
                     });
 
                     const s3Params = {

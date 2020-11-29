@@ -15,7 +15,7 @@ function AddMenu() {
 
   const [restaurantAddMenu] = useMutation(addMenu, {
     onCompleted() {
-      alert(" Menu Added!")
+      alert("Itea Added in Menu")
     }
   })
   const [sign] = useMutation(s3Sign)
@@ -74,7 +74,6 @@ function AddMenu() {
             <div className="login-form">
               <div className="main-div">
                 <div className="panel"></div>
-
                 <div>
                   <div>
                     <h1 className="heading">Add a Menu Item</h1>

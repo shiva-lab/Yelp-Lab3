@@ -66,6 +66,9 @@ export const s3Sign = gql`
       $delivery_method: String!
       $website: String!
       $path: String!
+      $path1: String!
+      $path2: String!
+      $path3: String!
   ){
     UpdateRestaurantProfile(
       id: $id
@@ -83,6 +86,9 @@ export const s3Sign = gql`
       delivery_method: $delivery_method
       website: $website
       path: $path
+      path1: $path1
+      path2: $path2
+      path3: $path3
     ) {
       _id
       location
@@ -101,6 +107,9 @@ export const s3Sign = gql`
       delivery_method
       website
       path
+      path1
+      path2
+      path3
     }
   }
   `;
