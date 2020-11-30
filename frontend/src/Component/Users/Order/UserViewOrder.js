@@ -29,6 +29,7 @@ class UserViewOrder extends React.Component {
                         <th>User Name</th>
                         <th>Delivery Mode</th>
                         <th>Status</th>
+                        <th>Review</th>
                       </tr>
                     </thead>
 
@@ -41,6 +42,16 @@ class UserViewOrder extends React.Component {
                           <td>{food.user_name}</td>
                           <td>{food.deliverymode}</td>
                           <td>{food.orderstatus}</td>
+                          <td>
+                          <Link to="/addreview">
+                            <button
+                          onClick={this.handleReviewClick(
+                            food._id,
+                            food.restaurant_id,
+                            food.user_id
+                          )}
+                          >Add Review</button>
+                          </Link></td>
                         </tr>
                       </tbody>
                     ))}
@@ -52,6 +63,18 @@ class UserViewOrder extends React.Component {
         </div>
       );
     }
+  }
+
+  handleReviewClick(order_id, restaurant_id, user_id) {
+    return function () {
+      console.log("OrderID:", order_id);
+      localStorage.setItem("order_id_review", order_id);
+      console.log("Restaurant ID:", restaurant_id);
+      localStorage.setItem("restaurant_id_review", restaurant_id);
+      console.log("User ID:", user_id);
+      localStorage.setItem("user_id_review", user_id);
+      return <Redirect to="/addreview" />;
+    };
   }
   render() {
     return (

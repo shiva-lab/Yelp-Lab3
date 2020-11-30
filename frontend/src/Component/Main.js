@@ -24,6 +24,7 @@ import UserViewMenu from "../Component/Users/Menu/UserViewMenu"
 import UserUpdateProfile from "../Component/Users/Profile/UserUpdateProfile"
 import UserViewOrder from "../Component/Users/Order/UserViewOrder"
 import AllRestaurant from "../Component/Users/Home/AllRestaurant";
+import AddReview from "../Component/Users/Review/AddReview"
 
 
 //Create a Main Component
@@ -53,6 +54,7 @@ class Main extends Component {
                 <Route path="/uservieworder" component={UserViewOrder}/>
                 <Route path="/logout" component={Logout}/>
                 <Route path="/allRestaurant" component={AllRestaurant} />
+                <Route path="/addreview" component={AddReview} />
                 </BrowserRouter>
             </div>
 
