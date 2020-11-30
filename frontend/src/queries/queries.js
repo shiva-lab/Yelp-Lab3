@@ -137,6 +137,8 @@ export const getReviewQuery = gql`
             contactinfo
             address
             location
+            lat
+            lng
         }
     }
     

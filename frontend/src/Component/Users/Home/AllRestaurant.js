@@ -41,6 +41,7 @@ function AllRestaurant (){
         }
       })
     }
+    let latlng = []
 
 
 
@@ -122,6 +123,12 @@ function AllRestaurant (){
                         <tbody>
                         {
                           allRest.map(rest => {
+                            if(rest.lat && rest.lng && rest.lat !== "" && rest.lng !=""){
+                              latlng.push({
+                                latitude: parseInt(rest.lat),
+                                longitude: parseInt(rest.lng)
+                              })
+                            }
                             return (
                               <tr>
                                 <td>
@@ -155,7 +162,7 @@ function AllRestaurant (){
                   </div>
                 </div>
                 <div className="maparea">
-                  {/* <MapContainer latlng={this.state.latlng} /> */}
+                  <MapContainer latlng={latlng} />
                 </div>
               </div>
             </div>

@@ -208,11 +208,12 @@ mutation updateOrderStatus($id: ID! , $orderstatus: String!){
 export const updateUserProfile = gql`
 mutation updateUserProfile(
   $id: ID!
+  $user_name: String!
     $bio: String!
     $headline: String!
     $fname: String!
     $lname: String!
-    $dob: String!
+    $dob: Date!
     $city: String!
     $ustate: String!
     $country: String!
@@ -228,6 +229,7 @@ mutation updateUserProfile(
 ){
   UpdateUserProfile(
     id: $id,
+    user_name: $user_name,
         bio: $bio,
         headline:$headline,
         fname:$fname,
@@ -236,17 +238,18 @@ mutation updateUserProfile(
         city:$city,
         ustate:$ustate,
         country:$country,
-        nickname:$nickname,
-        emailid:$emailid,
+        nick_name:$nickname,
+        Emailid:$emailid,
         mobile:$mobile,
         address:$address,
         favorites:$favorites,
         myblog:$myblog,
-        things_ilove:$things_ilove,
+        things_i_love:$things_ilove,
         find_me_in:$find_me_in,
         path:$path,
   ) {
     _id
+    user_name
         bio,
         headline,
         fname,
@@ -255,13 +258,13 @@ mutation updateUserProfile(
         city,
         ustate,
         country,
-        nickname,
-        emailid,
+        nick_name,
+        Emailid,
         mobile,
         address,
         favorites,
         myblog,
-        things_ilove,
+        things_i_love,
         find_me_in,
         path,
   }

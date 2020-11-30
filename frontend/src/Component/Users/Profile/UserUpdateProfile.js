@@ -14,6 +14,7 @@ function UserUpdateProfile() {
       history.push("/ViewUserProfile");
     },
   });
+  const [username, setusername] = useState("");
   const [bio, setbio] = useState("");
   const [headline, setheadline] = useState("");
   const [fname, setfname] = useState("");
@@ -59,6 +60,7 @@ function UserUpdateProfile() {
     await userUpdate({
       variables: {
         id: localStorage.getItem("user_id"),
+        user_name: username,
         bio,
         headline,
         fname,
@@ -92,6 +94,21 @@ function UserUpdateProfile() {
                   <div>
                     <h1 class="heading">User Profile Update</h1>
                     <form onSubmit={updateProfile}>
+                    <lable>Username</lable>
+                      <br />
+                      <textarea
+                        style={{ borderRadius: "3px" }}
+                        id="bio"
+                        name="bio"
+                        cols="30"
+                        rows="10"
+                        placeholder="Bio"
+                        value={username}
+                        onChange={e => {
+                          setusername(e.target.value)
+                        }}
+                      ></textarea>
+                      
                       <br />
                       <lable>Bio</lable>
                       <br />

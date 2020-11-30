@@ -3,7 +3,7 @@ const User = require('../models/User');
 const Restaurant = require('../models/Restaurant');
 const Order = require('../models/Order');
 const RestEvent = require('../models/Event');
-const { GraphQLDateTime } = require('graphql-iso-date');
+const { GraphQLDateTime, GraphQLDate } = require('graphql-iso-date');
 const { response } = require('express');
 const { getToken, encryptPassword, comparePassword } = require("../config/passport")
 const {
@@ -34,8 +34,9 @@ const UserType = new GraphQLObjectType({
         userpass: { type: GraphQLString },
         image: { type: GraphQLString },
         ts: { type: GraphQLDateTime },
-        dob: { type: GraphQLDateTime },
+        dob: { type: GraphQLDate },
         city: { type: GraphQLString },
+        address: { type: GraphQLString },
         country: { type: GraphQLString },
         path: { type: GraphQLString },
         bio: { type: GraphQLString },
@@ -547,17 +548,19 @@ const Mutation = new GraphQLObjectType({
         UpdateUserProfile: {
             type: UserType,
             args: {
+                id: { type: GraphQLID },
                 user_name: { type: GraphQLString },
                 fname: { type: GraphQLString },
                 lname: { type: GraphQLString },
                 Emailid: { type: GraphQLString },
                 mobile: { type: GraphQLString },
                 image: { type: GraphQLString },
-                dob: { type: GraphQLDateTime },
+                dob: { type: GraphQLDate },
                 city: { type: GraphQLString },
                 country: { type: GraphQLString },
                 path: { type: GraphQLString },
                 bio: { type: GraphQLString },
+                address: { type: GraphQLString },
                 favorites: { type: GraphQLString },
                 username: { type: GraphQLString },
                 zipcode: { type: GraphQLString },
@@ -584,6 +587,7 @@ const Mutation = new GraphQLObjectType({
                             country: args.country,
                             path: args.path,
                             bio: args.bio,
+                            address: args.address,
                             favorites: args.favorites,
                             username: args.username,
                             zipcode: args.zipcode,
