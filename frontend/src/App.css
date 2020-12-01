@@ -134,13 +134,13 @@
   width: 50%;
 }
 
-/* .signup-image{
-  background-image: url(../src/images/signup.png);
-} */
+.signup-image{
+  background-image: url(../../frontend/src/images/signup.png);
+}
 
-/* .updateprofile-image{
-  background-image: url(/assets/images/updateprofileimage.png);
-}  */
+.updateprofile-image{
+  background-image: url(../../frontend/src/images/updateprofileimage.png);
+} 
 
 .main-div-menu {
   background:#f5f5f5 none repeat scroll 0 0;

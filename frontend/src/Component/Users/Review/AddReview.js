@@ -4,125 +4,118 @@ import Navbar from "../Navbar/uNavbar";
 import StartRating from "./StarRating";
 import React, { useState } from "react";
 import { useMutation } from '@apollo/client';
-import { s3Sign, addMenu } from "../../../mutation/mutation"
+import { s3Sign, addReview } from "../../../mutation/mutation"
 import axios from "axios"
 
-class AddReview extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      review: "",
-      rating: "",
-      file: null,
-    };
-    this.submit = this.submit.bind(this);
-    this.onChange = this.onChange.bind(this);
-  }
-  handleChange = ({ target }) => {
-    const { name, value } = target;
-    this.setState({ [name]: value });
-  };
+function AddReview (){
 
-  submit = (event) => {
-    event.preventDefault();
-    let order_id = localStorage.getItem("order_id_review");
-    let restaurant_id = localStorage.getItem("restaurant_id_review");
-    let user_id = localStorage.getItem("user_id_review");
-    let rating = localStorage.getItem("ratingselectedstars");
-    let email = localStorage.getItem("email");
+  const [review, setreview] = useState('')
+  const [selectedFile, setselectedFile] = useState([]);
+  const [userreview] = useMutation(addReview, {
+    onCompleted() {
+      alert(" Review Added!")
+    }
+  })
 
-    const formData = new FormData();
-    formData.append("myfile", this.state.file);
-    formData.append("review", this.state.review);
-    formData.append("rating", rating);
-    formData.append("order_id", order_id);
-    formData.append("restaurant_id", restaurant_id);
-    formData.append("user_id", user_id);
-    formData.append("email", email);
-    const config = {
+  const [sign] = useMutation(s3Sign)
+
+
+  const uploadToS3 = async (file, signedRequest) => {
+    const options = {
       headers: {
-        "content-type": "multipart/form-data",
-      },
+        "Content-Type": file.type
+      }
     };
-    axios
-      .post("/addreview", formData, config)
-      .then((response) => {
-        if (response.status === 200) {
-          alert("Your review is successfully uploaded");
-        }
-        if (response.status >= 400) {
-          alert("Can not add review at the moment");
-        }
-      })
-      .catch((error) => {
-        alert("can not upload review,please try again");
-      });
+    await axios.put(signedRequest, file, options)
   };
 
-  resetUserInputs = () => {
-    this.setState({
-      review: "",
-      rating: "",
-    });
-  };
-
-  onChange(e) {
-    this.setState({ file: e.target.files[0] });
+  const onUpload = (e) => {
+    setselectedFile(e.target.files)
   }
 
-  render() {
-    console.log("State: ", this.state);
-    var restaurnt_id = cookie.load("cookie");
-    return (
-      <div>
-        <Navbar />
-        <div class="container">
-          <div class="login-form">
-            <div class="main-div">
-              <div class="panel"></div>
 
+  const AddReviewSubmit = async (e) => {
+    e.preventDefault() 
+    console.log(localStorage.getItem('restaurant_id_review'), localStorage.getItem('order_id_review'), localStorage.getItem('user_id_review'))
+    const response = await sign({
+      variables: {
+        filename: selectedFile[0].name,
+        filetype: selectedFile[0].type
+      }
+    }).catch(e => {
+      console.log(e)
+    })
+    const { url, signedRequest } = response.data.signS3
+    await uploadToS3(selectedFile[0], signedRequest)
+    await userreview({
+      variables: {
+        review_desc: review,
+        rating: localStorage.getItem('ratingselectedstars'),
+        restaurant_id: localStorage.getItem('restaurant_id_review'),
+        path: url,
+        order_id: localStorage.getItem('order_id_review'),
+        user_id: localStorage.getItem('user_id_review'),
+        email: localStorage.getItem('user_name_review')
+      }
+    })
+
+  }
+
+
+
+  return (
+    <div>
+      <Navbar />
+      <div class="container">
+        <div class="login-form">
+          <div class="main-div">
+            <div class="panel"></div>
+
+            <div>
               <div>
-                <div>
-                  <h1 class="heading">Provide Review</h1>
-                  <form onSubmit={this.submit} enctype="multipart/form-data">
-                    <textarea
-                      style={{ borderRadius: "3px" }}
-                      id="review"
-                      name="review"
-                      cols="30"
-                      rows="10"
-                      placeholder="Add Your Review"
-                      value={this.state.review}
-                      onChange={this.handleChange}
-                    ></textarea>
-                    <br />
-                    <br />
+                <h1 class="heading">Provide Review</h1>
+                <form onSubmit={AddReviewSubmit} enctype="multipart/form-data">
+                  <textarea
+                    style={{ borderRadius: "3px" }}
+                    id="review"
+                    name="review"
+                    cols="30"
+                    rows="10"
+                    placeholder="Add Your Review"
+                    value={review}
+                    onChange={e => {
+                      setreview(e.target.value)
+                    }}
+                  ></textarea>
+                  <br />
+                  <br />
 
-                    <StartRating />
+                  <StartRating />
 
-                    <br />
-                    <br />
-                    <input
-                      type="file"
-                      name="myfile"
-                      onChange={this.onChange}
-                      required
-                    />
-                    <br />
-                    <br />
-                    <input
-                      class="btn btn-primary"
-                      type="submit"
-                      value="Submit"
-                    ></input>
-                  </form>
-                </div>
+                  <br />
+                  <br />
+                  <input
+                    type="file"
+                    name="myfile"
+                    onChange={onUpload}
+                    required
+                  />
+                  <br />
+                  <br />
+                  <input
+                    class="btn btn-primary"
+                    type="submit"
+                    value="Submit"
+                  ></input>
+                </form>
               </div>
             </div>
           </div>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
+
 }
+ 
 export default AddReview;

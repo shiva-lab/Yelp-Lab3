@@ -48,7 +48,8 @@ class UserViewOrder extends React.Component {
                           onClick={this.handleReviewClick(
                             food._id,
                             food.restaurant_id,
-                            food.user_id
+                            food.user_id,
+                            food.user_name
                           )}
                           >Add Review</button>
                           </Link></td>
@@ -65,7 +66,7 @@ class UserViewOrder extends React.Component {
     }
   }
 
-  handleReviewClick(order_id, restaurant_id, user_id) {
+  handleReviewClick(order_id, restaurant_id, user_id, user_name) {
     return function () {
       console.log("OrderID:", order_id);
       localStorage.setItem("order_id_review", order_id);
@@ -73,6 +74,8 @@ class UserViewOrder extends React.Component {
       localStorage.setItem("restaurant_id_review", restaurant_id);
       console.log("User ID:", user_id);
       localStorage.setItem("user_id_review", user_id);
+      localStorage.setItem("user_name_review", user_name);
+
       return <Redirect to="/addreview" />;
     };
   }

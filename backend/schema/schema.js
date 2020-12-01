@@ -626,11 +626,10 @@ const Mutation = new GraphQLObjectType({
             resolve(parent,args, context) {
                 if (context.payload.loggedIn) {
 
-                    var objData = { review_desc: args.review_desc, rating: args.rating, path: args.path, order_id: args.order_id, user_id: args.user_id, email: args.email };
-                    // Adding multiple same entries, can do anndiotnal validation (optional)
+                    var objData = { review_desc: args.review_desc, rating: args.rating, path: args.path, restaurant_id: args.restaurant_id, order_id: args.order_id, user_id: args.user_id, email: args.email };
                     return Restaurant.findOneAndUpdate(
                         { _id: args.restaurant_id },
-                        { $push: { review: objData } },
+                        { $addToSet: { review: objData } },
                         (error, results) => {
                             if (error) {
                                 return "error"
