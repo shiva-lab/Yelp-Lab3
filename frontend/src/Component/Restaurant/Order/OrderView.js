@@ -12,13 +12,18 @@ import { updateOrderStatus } from "../../../mutation/mutation"
 function NewOrderView() {
   const history = useHistory()
   
-  const [changeStatus] = useMutation(updateOrderStatus)
+  const [changeStatus] = useMutation(updateOrderStatus, {
+    onCompleted(data){
+      setfilterorder('')
+    }
+  })
 
   const [orderstatus, setorderstatus] = useState('')
   const [filterorder, setfilterorder] = useState('')
 
   const { data, loading, error, refetch } = useQuery(getNewOrders,{
     variables: {
+      restaurant_id: localStorage.getItem('restaurant_id'),
       orderstatus: filterorder
     }
   })
@@ -28,7 +33,7 @@ function NewOrderView() {
 
   const handleUserClick = (e) => {
     localStorage.setItem("user_id", e.target.id);
-    history.push('/ViewUserProfile')
+    history.push('/userProfile')
 
   }
 
@@ -43,8 +48,8 @@ function NewOrderView() {
     })
 
   }
-  const optionsDelivery = ["Order Received","Preparing", "On the way", "Delivered"]
-  const optionsPickUp = ["Order Received","Preparing", "Pick up Ready", "Picked up"]
+  const optionsDelivery = ["Order Received","Preparing", "On the way", "Delivered", "Rejected"]
+  const optionsPickUp = ["Order Received","Preparing", "Pick up Ready", "Picked up", "Rejected"]
   let optionsDeliveryTemplate = optionsDelivery.map(o => {
     return <option key = {o} value={o}>{o}</option>
   })
@@ -64,8 +69,6 @@ function NewOrderView() {
       order = order.filter(e => {if(e.orderstatus == filterorder) return e})
     }
     return (
-      <div>
-        <div>
           <div>
             <Navbar />
             <div className="container">
@@ -81,6 +84,7 @@ function NewOrderView() {
                       id="filter"
                       name="filter"
                       placeholder="filter"
+                      value={filterorder}
                       onChange={e => {
                         setfilterorder(e.target.value)
                       }}
@@ -92,6 +96,7 @@ function NewOrderView() {
                       <option value="Rejected">Cancelled</option>
                     </select> &nbsp;
                  
+   
                   <br />
                   <div className="container">
                     <div>
@@ -99,7 +104,8 @@ function NewOrderView() {
                         <thead>
                           <tr className="tbl-header">
                             <th>Date/Time</th>
-                            <th>Order ID</th>
+                            <th>Image</th>
+                            <th>Item Name</th>
                             <th>UserName</th>
                             <th>Delivery Mode</th>
                             <th>Current Status</th>
@@ -110,12 +116,14 @@ function NewOrderView() {
                         </thead>
                         <tbody>
                           {order.map(item => {
-                            let optionTemplate = (item.deliverymode == "Delivery") ? optionsDeliveryTemplate : optionsPickUpTemplate
+                            let optionTemplate = (item.deliverymode == "delivery") ? optionsDeliveryTemplate : optionsPickUpTemplate
                             return (
                               <tr>
                                 <td> {item.ts} </td>
-                                <td> {item._id} </td>
-                                <td id={item.user_id} onClick={handleUserClick}> {item.user_name} </td>
+                                <td> <img src={item.cart[0].path} style={{height: "100px", width: "100px"}}></img> </td>
+                                <td> {item.cart[0].itemname} </td>
+                                
+                                <td id={item.user_id} onClick={handleUserClick} style={{color: "blue"}}> {item.user_name} </td>
                                 <td> {item.deliverymode} </td>
                                 <td> {item.orderstatus} </td>
                                 <td>
@@ -152,8 +160,7 @@ function NewOrderView() {
               </div>
             </div>
           </div>
-        </div>
-      </div>
+
     );
   }
 

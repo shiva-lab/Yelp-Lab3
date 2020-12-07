@@ -38,7 +38,7 @@ function ViewReview() {
                                                 <thead>
                                                     <tr className="tbl-header">
                                                         <th>Picture</th>
-                                                        <th>Email</th>
+                                                        <th>Name</th>
                                                         <th>Description</th>
                                                         <th>Rating</th>
 

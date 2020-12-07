@@ -98,14 +98,18 @@ export const getReviewQuery = gql`
 
     export const getNewOrders = gql`
 
-    query getNewOrder{
-        Order {
+    query getNewOrder($restaurant_id: String!){
+        Order(restaurant_id: $restaurant_id) {
             _id
           restaurant_id
           user_id
           user_name
           deliverymode
           orderstatus
+          cart {
+            itemname
+            path
+          }
           ts
         }
         
@@ -114,14 +118,19 @@ export const getReviewQuery = gql`
 
     export const getUserOrders = gql`
 
-    query getUserOrder($user_id: String){
-        Order (user_id :$user_id){
+    query getUserOrder($user_id: String, $order_by: order_by){
+        Order (user_id :$user_id, order_by: $order_by){
             _id
           restaurant_id
           user_id
           user_name
           deliverymode
           orderstatus
+          cart {
+            itemname
+            path
+            restaurant_name
+          }
           ts
         }
         
@@ -139,6 +148,7 @@ export const getReviewQuery = gql`
             location
             lat
             lng
+            rating
         }
     }
     

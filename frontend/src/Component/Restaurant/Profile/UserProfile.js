@@ -1,10 +1,9 @@
 import React from "react";
 import { graphql } from 'react-apollo';
 import { getUserProfileQuery } from '../../../queries/queries';
-import Navbar from "../Navbar/uNavbar"
-// import Navbar from "./uNavbar";
+import Navbar from "../NavBar/rNavbar";
 
-class ViewUserProfile extends React.Component {
+class UserProfile extends React.Component {
   displayProfile(){
     var data = this.props.data;
     if(data.loading){
@@ -172,4 +171,4 @@ export default graphql(getUserProfileQuery,{
       id: props.id
     }
   })
-})(ViewUserProfile);
+})(UserProfile);

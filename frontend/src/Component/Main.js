@@ -4,6 +4,8 @@ import { Route } from "../../node_modules/react-router-dom";
 import Home from "../views/Home";
 import ViewRestProfile from '../Component/Restaurant/Profile/ViewRestProfile'
 import ViewUserProfile from '../Component/Users/Profile/ViewUserProfile';
+import UserProfile from '../Component/Restaurant/Profile/UserProfile';
+import ViewRestUserProfile from '../Component/Users/Profile/ViewRestaurantProfile';
 import RestaurantLogin from '../Component/Restaurant/Login/RestaurantLogin'
 import RestaurantRegister from '../Component/Restaurant/Login/RestaurantRegister'
 import UserLogin from "../Component/Users/Login/UserLogin";
@@ -37,6 +39,7 @@ class Main extends Component {
                 <Route exact path="/" component={Home} />
                 <Route path="/ViewRestProfile" render={() => <ViewRestProfile id={localStorage.getItem('restaurant_id')}/>}/>
                 <Route path="/ViewUserProfile" render={() => <ViewUserProfile id={localStorage.getItem('user_id')}/>} />
+                <Route path="/userProfile" render={() => <UserProfile id={localStorage.getItem('user_id')}/>} />
                 <Route path="/RestaurantLogin" component={RestaurantLogin} />
                 <Route path="/RestaurantRegister" component={RestaurantRegister} />
                 <Route path="/UserLogin" component={UserLogin} />
@@ -55,6 +58,8 @@ class Main extends Component {
                 <Route path="/logout" component={Logout}/>
                 <Route path="/allRestaurant" component={AllRestaurant} />
                 <Route path="/addreview" component={AddReview} />
+                <Route path="/viewrestuserprofile" render={() => <ViewRestUserProfile id={localStorage.getItem('restaurant_id')}/>}  />
+                
                 </BrowserRouter>
             </div>
 

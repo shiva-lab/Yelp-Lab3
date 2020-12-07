@@ -73,7 +73,7 @@ class Home extends Component {
                   </div>
                </div>
             </div>
-            {/* <Footer/> */}
+      <div className="main-footer_city-landscape-img" role="presentation" />
          </div>
       )
 

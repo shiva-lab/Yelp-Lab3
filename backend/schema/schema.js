@@ -2,7 +2,6 @@ const graphql = require('graphql');
 const User = require('../models/User');
 const Restaurant = require('../models/Restaurant');
 const Order = require('../models/Order');
-const RestEvent = require('../models/Event');
 const { GraphQLDateTime, GraphQLDate } = require('graphql-iso-date');
 const { response } = require('express');
 const { getToken, encryptPassword, comparePassword } = require("../config/passport")
@@ -49,12 +48,6 @@ const UserType = new GraphQLObjectType({
         ustate: { type: GraphQLString },
         nick_name: { type: GraphQLString },
         headline: { type: GraphQLString },
-        // registeredEvents: {
-        //     type: new GraphQLList(EventType),
-        //     resolve: (parent, args) => {
-        //         return RestEvent.find({ _id: { $in: parent.registeredEvents } })
-        //     }
-        // },
         followedUser: {
             type: new GraphQLList(UserType),
             resolve: (parent, args) => {
@@ -164,26 +157,6 @@ const MeType = new GraphQLObjectType({
     }
 })
 
-// const EventType = new GraphQLObjectType({
-//     name: 'Event',
-//     fields: () => ({
-//         _id: { type: new GraphQLNonNull(GraphQLID) },
-//         restaurant_id: { type: GraphQLID },
-//         eventname: { type: GraphQLString },
-//         eventdescription: { type: GraphQLString },
-//         time: { type: GraphQLString },
-//         date: { type: GraphQLString },
-//         address: { type: GraphQLString },
-//         city: { type: GraphQLString },
-//         eventtype: { type: GraphQLString },
-//         hashtag: { type: GraphQLString },
-//         path: { type: GraphQLString },
-//         RegistredUser: { type: GraphQLList(UserType) }
-//     })
-
-
-// })
-
 const OrderType = new GraphQLObjectType({
     name: 'Order',
     fields: () => ({
@@ -265,30 +238,16 @@ const RootQuery = new GraphQLObjectType({
             resolve(parent, args, context) {
                 if (context.payload.loggedIn) {
                     if (!args.search) {
-                        return Restaurant.find({ ...args });
+                        return Restaurant.find({ ...args }).sort({"restaurantname": 1});
                     } else {
                         // Add search in case sensititve or full text with mongo OR use all fields as collected variable
-                        return Restaurant.find({ $or: [{ _id: args._id }, { Emailid: args.Emailid }, { restaurantname: args.search }, { deliverymode: args.search }, { cuisine: args.search }, { location: args.search }, { modeofdelivery: args.search }, { "menu.itemname": args.search }] })
+                        return Restaurant.find({ $or: [{ _id: args._id }, { Emailid: args.Emailid }, { restaurantname: args.search }, { deliverymode: args.search }, { cuisine: args.search }, { location: args.search }, { modeofdelivery: args.search }, { "menu.itemname": args.search }] }).sort({"restaurantname": 1})
                     }
                 } else {
                     throw new AuthenticationError("You are not authorised to access this resource.")
                 }
             }
         },
-        // Event: {
-        //     type: GraphQLList(EventType),
-        //     args: { _id: { type: GraphQLID }, restaurant_id: { type: GraphQLID }, eventname: { type: GraphQLString }, order_by: { type: order_by } },
-        //     resolve(parent, args) {
-        //         if (args.order_by && args.order_by.fields && args.order_by.direction) {
-        //             var mysort = {};
-        //             mysort[args.order_by.fields] = args.order_by.direction
-        //             return RestEvent.find({}).sort(mysort)
-        //         } else {
-        //             return RestEvent.find({ ...args })
-        //         }
-
-        //     }
-        // },
         Order: {
             type: GraphQLList(OrderType),
             args: { _id: { type: GraphQLID }, restaurant_id: { type: GraphQLString }, orderstatus: { type: GraphQLString }, user_id: { type: GraphQLString }, order_by: { type: order_by } },
@@ -297,7 +256,7 @@ const RootQuery = new GraphQLObjectType({
                     if (args.order_by && args.order_by.fields && args.order_by.direction) {
                         var mysort = {};
                         mysort[args.order_by.fields] = args.order_by.direction
-                        return Order.find({}).sort(mysort)
+                        return Order.find({user_id: args.user_id}).sort(mysort)
                     } else {
                         return Order.find({ ...args })
                     }
@@ -349,7 +308,7 @@ const Mutation = new GraphQLObjectType({
                 user_name: { type: new GraphQLNonNull(GraphQLString) }
             },
             async resolve(parent, args) {
-                const newUser = { user_name: args.user_name, Emailid: args.Emailid, userpass: await encryptPassword(args.userpass), zipcode: args.zipcode }
+                const newUser = { user_name: args.user_name, Emailid: args.Emailid, userpass: await encryptPassword(args.userpass), zipcode: args.zipcode, yelpingsince: Date.now() }
                 const user = await User.findOne({ Emailid: args.Emailid })
                 if (user) {
                     throw new AuthenticationError("User Already Exists!")
@@ -619,17 +578,33 @@ const Mutation = new GraphQLObjectType({
                 rating: { type: new GraphQLNonNull(GraphQLString) },
                 restaurant_id: { type: new GraphQLNonNull(GraphQLID) },
                 path: { type: new GraphQLNonNull(GraphQLString) },
-                order_id: { type: new GraphQLNonNull(GraphQLID) },
+                order_id: { type: GraphQLID },
                 user_id: { type: new GraphQLNonNull(GraphQLID) },
                 email: { type: new GraphQLNonNull(GraphQLString) },
             },
-            resolve(parent,args, context) {
+            async resolve(parent,args, context) {
                 if (context.payload.loggedIn) {
-
+                    var allReviewSum = 0;
+                    var currentAvgReview = 0.0;
+                    const allReview = await Restaurant.find({_id: args.restaurant_id}).then(response => {
+                        response.forEach(e=> {
+                            if (typeof(e.rating) == "undefined" || Number.isNaN(parseInt(e.rating))){
+                                e.review.forEach(r => {
+                                    if (r.rating && r.rating != "" && r.rating != null){
+                                        allReviewSum = allReviewSum + parseInt(r.rating)
+                                    }
+                                })
+                                currentAvgReview = allReviewSum / parseInt(e.review.length)
+                            } else {
+                                currentAvgReview = parseFloat(e.rating)
+                            }
+                            
+                        })
+                    })                                    
                     var objData = { review_desc: args.review_desc, rating: args.rating, path: args.path, restaurant_id: args.restaurant_id, order_id: args.order_id, user_id: args.user_id, email: args.email };
-                    return Restaurant.findOneAndUpdate(
+                    const addReview =  await Restaurant.findOneAndUpdate(
                         { _id: args.restaurant_id },
-                        { $addToSet: { review: objData } },
+                        { $addToSet: { review: objData }, rating: (currentAvgReview + parseFloat(args.rating)) / 2 },
                         (error, results) => {
                             if (error) {
                                 return "error"
@@ -637,6 +612,8 @@ const Mutation = new GraphQLObjectType({
                                 return results
                             }
                         })
+                        console.log(addReview)
+                        return addReview
 
                 } else {
                     throw new AuthenticationError("You are not authorised to access this resource.")

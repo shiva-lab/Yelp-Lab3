@@ -309,7 +309,7 @@ mutation createOrder($id: ID!, $user_id: ID! , $deliverymode: String!){
 
 
 export const addReview = gql`
-mutation addReview($review_desc: String!, $rating: String!, $restaurant_id: ID!, $user_id: ID!, $order_id: ID!, $path: String!, $email: String! ){
+mutation addReview($review_desc: String!, $rating: String!, $restaurant_id: ID!, $user_id: ID!, $order_id: ID, $path: String!, $email: String! ){
   AddRestaurantReview(review_desc:$review_desc, rating: $rating, restaurant_id: $restaurant_id, user_id:$user_id, order_id: $order_id, email:$email, path: $path ){
     _id
     review {

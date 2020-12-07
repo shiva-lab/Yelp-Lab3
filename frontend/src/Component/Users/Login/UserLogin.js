@@ -49,6 +49,7 @@ function UserLogin() {
 
                       }).catch(err => {
                         console.log("Error", err)
+                        alert(err.message)
                       });
                     }}>
                       <input

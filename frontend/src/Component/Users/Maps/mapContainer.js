@@ -28,8 +28,8 @@ export const MapContainer = (props) => {
       googleMapsApiKey='AIzaSyAD0ljZQ6iObBbIIKqnPMI3I-ttV_rirMw'>
       <GoogleMap
         mapContainerStyle={mapStyles}
-        zoom={13}
-        center={{ lat: latlng[0].latitude, lng: latlng[0].longitude }}
+        zoom={8}
+        center={{ lat:  latlng[0].latitude, lng:  latlng[0].longitude }}
       >
         {displayMarkers()}
       </GoogleMap>

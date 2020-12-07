@@ -47,39 +47,45 @@ function UserUpdateProfile() {
 
   const updateProfile = async (e) => {
     e.preventDefault();
-    const response = await sign({
-      variables: {
-        filename: selectedFile[0].name,
-        filetype: selectedFile[0].type,
-      },
-    }).catch((e) => {
-      console.log(e);
-    });
-    const { url, signedRequest } = response.data.signS3;
-    await uploadToS3(selectedFile[0], signedRequest);
-    await userUpdate({
-      variables: {
-        id: localStorage.getItem("user_id"),
-        user_name: username,
-        bio,
-        headline,
-        fname,
-        lname,
-        dob,
-        city,
-        ustate,
-        country,
-        nickname,
-        emailid,
-        mobile,
-        address,
-        favorites,
-        myblog,
-        things_ilove,
-        find_me_in,
-        path: url,
-      },
-    });
+    if ( bio !== '' && emailid !== ''){
+      const response = await sign({
+        variables: {
+          filename: selectedFile[0].name,
+          filetype: selectedFile[0].type,
+        },
+      }).catch((e) => {
+        console.log(e);
+      });
+      const { url, signedRequest } = response.data.signS3;
+      await uploadToS3(selectedFile[0], signedRequest);
+      
+      await userUpdate({
+        variables: {
+          id: localStorage.getItem("user_id"),
+          user_name: username,
+          bio,
+          headline,
+          fname,
+          lname,
+          dob,
+          city,
+          ustate,
+          country,
+          nickname,
+          emailid,
+          mobile,
+          address,
+          favorites,
+          myblog,
+          things_ilove,
+          find_me_in,
+          path: url,
+        },
+      });
+    } else {
+      alert("Error")
+    }
+    
   }
     return (
       <div>
@@ -107,6 +113,7 @@ function UserUpdateProfile() {
                         onChange={e => {
                           setusername(e.target.value)
                         }}
+                        required
                       ></textarea>
                       
                       <br />
@@ -123,6 +130,7 @@ function UserUpdateProfile() {
                         onChange={e => {
                           setbio(e.target.value)
                         }}
+                        required
                       ></textarea>
                       <br />
                       <br />
@@ -138,6 +146,7 @@ function UserUpdateProfile() {
                         onChange={e => {
                           setheadline(e.target.value)
                         }}
+                        required
                       />
                       <br />
                       <br />
@@ -153,6 +162,7 @@ function UserUpdateProfile() {
                         onChange={e => {
                           setfname(e.target.value)
                         }}
+                        required
                       />
                       <br />
                       <br />
@@ -169,6 +179,7 @@ function UserUpdateProfile() {
                         onChange={e => {
                           setlname(e.target.value)
                         }}
+                        required
                       />
                       <br />
                       <br />
@@ -184,6 +195,7 @@ function UserUpdateProfile() {
                         onChange={e => {
                           setdob(e.target.value)
                         }}
+                        required
                       />
                       <br />
                       <br />
@@ -198,6 +210,7 @@ function UserUpdateProfile() {
                         onChange={e => {
                           setcity(e.target.value)
                         }}
+                        required
                       />
                       <br />
                       <br />
@@ -212,6 +225,7 @@ function UserUpdateProfile() {
                         onChange={e => {
                           setustate(e.target.value)
                         }}
+                        required
                       />
                       <br />
                       <br />
@@ -227,6 +241,7 @@ function UserUpdateProfile() {
                         onChange={e => {
                           setcountry(e.target.value)
                         }}
+                        required
                       />
                       <br />
                       <br />
@@ -242,6 +257,7 @@ function UserUpdateProfile() {
                         onChange={e => {
                           setnickname(e.target.value)
                         }}
+                        required
                       />
                       <br />
                       <br />
@@ -257,6 +273,7 @@ function UserUpdateProfile() {
                         onChange={e => {
                           setemail(e.target.value)
                         }}
+                        required
                       />
                       <br />
                       <br />
@@ -272,6 +289,7 @@ function UserUpdateProfile() {
                         onChange={e => {
                           setmobile(e.target.value)
                         }}
+                        required
                       />
                       <br />
                       <br />
@@ -287,6 +305,7 @@ function UserUpdateProfile() {
                         onChange={e => {
                           setaddress(e.target.value)
                         }}
+                        required
                       />
                       <br />
                       <br />
@@ -302,6 +321,7 @@ function UserUpdateProfile() {
                         onChange={e => {
                           setfavorites(e.target.value)
                         }}
+                        required
                       />
                       <br />
                       <br />
@@ -317,6 +337,7 @@ function UserUpdateProfile() {
                         onChange={e => {
                           setmyblog(e.target.value)
                         }}
+                        required
                       />
                       <br />
                       <br />
@@ -332,6 +353,7 @@ function UserUpdateProfile() {
                         onChange={e => {
                           setthings_ilove(e.target.value)
                         }}
+                        required
                       />
                       <br />
                       <br />
@@ -347,6 +369,7 @@ function UserUpdateProfile() {
                         onChange={e => {
                           setfind_me_in(e.target.value)
                         }}
+                        required
                       />
                       <br />
                       <br />

@@ -21,6 +21,13 @@ function AllRestaurant (){
     history.push("/userviewmenu")
   }
 
+  const ViewRest = (e) => {
+    e.preventDefault()
+    localStorage.setItem('restaurant_id',e.target.id)
+    localStorage.setItem('restaurantname', e.target.name)
+    history.push("/viewrestuserprofile")
+  }
+
   if (loading) {
     return (
       <div>
@@ -41,7 +48,7 @@ function AllRestaurant (){
         }
       })
     }
-    let latlng = []
+    let latlng = [{ latitude:37.359771, longitude: -121.067571}]
 
 
 
@@ -117,6 +124,8 @@ function AllRestaurant (){
                             <th>Contact Info</th>
                             <th>Address</th>
                             <th>City/Location</th>
+                            <th>Rating</th>
+                            <th>View Profile</th>
                             <th>Order Now</th>
                           </tr>
                         </thead>
@@ -150,7 +159,13 @@ function AllRestaurant (){
                                 {rest.location}
                                 </td>
                                 <td>
-                                <button id={rest._id} name={rest.restaurantnam} onClick={OrderRest}>Order Now</button>
+                                {parseFloat(rest.rating).toFixed(2)}
+                                </td>
+                                <td>
+                                <button id={rest._id} name={rest.restaurantname} onClick={ViewRest}>View Profile</button>
+                                </td>
+                                <td>
+                                <button id={rest._id} name={rest.restaurantname} onClick={OrderRest}>Order Now</button>
                                 </td>
                               </tr>
                             )
@@ -161,6 +176,7 @@ function AllRestaurant (){
                     </div>
                   </div>
                 </div>
+
                 <div className="maparea">
                   <MapContainer latlng={latlng} />
                 </div>

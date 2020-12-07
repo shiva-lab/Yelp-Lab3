@@ -137,10 +137,10 @@
 .signup-image{
   background-image: url(../../frontend/src/images/signup.png);
 }
-/* 
+
 .updateprofile-image{
   background-image: url(../../frontend/src/images/updateprofileimage.png);
-}  */
+} 
 
 .main-div-menu {
   background:#f5f5f5 none repeat scroll 0 0;
@@ -179,12 +179,12 @@ td{
   border-bottom: solid 1px rgba(255,255,255,0.1);
   word-wrap: break-word;
 }
-/* .main-footer_city-landscape-img {
-  background: url(/assets/images/footer.png) no-repeat bottom;
+.main-footer_city-landscape-img {
+  background: url(../../frontend/src/images/footer.png) no-repeat bottom;
   background-size: 660px 140px;
   margin: 42px auto 18px;
   height: 140px
-} */
+}
 
 .link-home{
   color: #d4d4d4;
@@ -193,12 +193,12 @@ td{
   color: #d4d4d4;
 }
 
-/* .main-header{
+.main-header{
   background-color:#d32323;
   background-size: 300px 140px;
   height: 50px;
-  background-image: url(/assets/images/headerimage.png) no-repeat top;;
-} */
+  background-image: url(../../frontend/src/images/headerimage.png) no-repeat top;;
+}
 
 .profiletable{
   width:50%;

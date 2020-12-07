@@ -48,6 +48,7 @@ function RestaurantLogin() {
 
                       }).catch(err => {
                         console.log("Error", err)
+                        alert(err.message)
                       });
                     }}>
                       <input
@@ -87,7 +88,7 @@ function RestaurantLogin() {
                       </button>
 
                       <p className="text-center">
-                        Don't Have an account? <Link to="/RestaurantSignUp">Sign up</Link>
+                        Don't Have an account? <Link to="/RestaurantRegister">Sign up</Link>
                       </p>
                     </form>
                   </div>

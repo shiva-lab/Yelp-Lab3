@@ -1,209 +1,192 @@
-import React, { Component } from "react";
-import { Redirect, Link } from "react-router-dom";
-import cookie from "react-cookies";
-import axios from "axios";
-import Navbar from "../../restaurantview/rNavbar";
-import Moment from "react-moment";
-import "moment-timezone";
+import React, { Component } from 'react';
+import { graphql } from 'react-apollo';
+import { getProfileQuery } from '../../../queries/queries';
+import {MapContainer} from "../../Users/Maps/mapContainer"
+import Navbar from "../../Users/Navbar/uNavbar"
+import { Link, Redirect, useHistory } from "react-router-dom";
 
-class UViewProfileRest extends React.Component {
-  constructor(props) {
-    super();
-    this.state = {
-      profile: [],
-    };
+
+class ViewRestUserProfile extends Component {
+  displayProfile(){
+      var data = this.props.data;
+      if(data.loading){
+          return( <div>Loading profile...</div> );
+      } 
+      else {
+          return data.Restaurant.map((food) => (
+                  <div className="row">
+                    <div>
+                      <div>
+                        <div>
+                          <br />
+                          <img src={food.path} width={400} height={250} mode="fit" />
+                          <img src={food.path1} width={400} height={250} mode="fit" />
+                          <img src={food.path2} width={400} height={250} mode="fit" />
+                          <img src={food.path3} width={400} height={250} mode="fit" />
+                        </div>
+                        <div className="login-form">
+                          <div className="main-div-ru">
+                            <div>
+                              <div>
+                                <div>
+                                  <table>
+                                    <thead>
+                                      <tr>
+                                        <th className="profilepagefont">
+                                          <h1>
+                                            <b>
+                                              {food.restaurantname}
+                                            </b>
+                                          </h1>
+                                        </th>
+                                      </tr>
+                                      <tr><td>
+                                          <Link to="/userviewmenu">
+                                            <button
+                                              className="btn btn-danger"
+                                            >
+                                              View Menu
+                                            </button>
+                                          </Link>
+                                        </td>
+                                        <td>
+                                          <Link to="/addreview">
+                                            <button
+                                              className="btn btn-danger"
+                                              // onClick={this.handleReviewClick(
+                                              //   food._id,
+                                              //   food.user_id
+                                              // )}
+                                            >
+                                              Rate Restaurant
+                                            </button>
+                                          </Link>
+                                        </td>
+                                      </tr>
+      
+                                      <tr>
+                                        <th className="profilepagefont">Address</th>
+                                        <td className="profiletdfont">
+                                          {food.address}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <th className="profilepagefont">City</th>
+                                        <td className="profiletdfont">
+                                          {food.location}{" "}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <th className="profilepagefont">Zipcode</th>
+                                        <td className="profiletdfont">
+                                          {food.zipcode}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <th className="profilepagefont">
+                                          Description
+                                        </th>
+                                        <td className="profiletdfont">
+                                          {food.rdescription}{" "}
+                                        </td>
+                                      </tr>
+      
+                                      <tr>
+                                        <th className="profilepagefont">Cuisine</th>
+                                        <td className="profiletdfont">
+                                          {food.cuisine}{" "}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <th className="profilepagefont">
+                                          Mode Of delivery
+                                        </th>
+                                        <td className="profiletdfont">
+                                          {food.modeofdelivery}{" "}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <th className="profilepagefont">
+                                          Delivery Method{" "}
+                                        </th>
+                                        <td className="profiletdfont">
+                                          {food.delivery_method}{" "}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <th className="profilepagefont">Timings</th>
+                                        <td className="profiletdfont">
+                                          {food.timings}
+                                        </td>
+                                      </tr>
+      
+                                      <tr>
+                                        <th className="profilepagefont">Website</th>
+                                        <td className="profiletdfont">
+                                          {food.website}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <th className="profilepagefont">Rating</th>
+                                        <td className="profiletdfont">
+                                          {food.rating}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <th className="profilepagefont">
+                                          Contact Number
+                                        </th>
+                                        <td className="profiletdfont">
+                                          {food.contactinfo}{" "}
+                                        </td>
+                                      </tr>
+      
+                                      <tr>
+                                        <th className="profilepagefont">
+                                          Email Address
+                                        </th>
+                                        <td className="profiletdfont">
+                                          {food.Emailid}{" "}
+                                        </td>
+                                      </tr>
+                                    </thead>
+                                    <tbody />
+                                  </table>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="signup">
+                          <div className="maparea">
+                            { <MapContainer latlng={[{ latitude: 37.377270327707286, longitude: -122.03075869601092 }]} />}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))
+       
+      }
   }
-
-  componentDidMount() {
-    const self = this;
-    // const user_id = cookie.load("cookie1");
-    const user_id = localStorage.getItem('user_id');
-    axios.get(`/uviewprofile/${user_id}`)
-      .then((response) => {
-        if (response.status >= 400) {
-          throw new Error("Bad response from server");
-        }
-        console.log(response.data)
-        self.setState({ profile: [response.data.data] });
-      })
-      .catch((err) => {
-        console.log("caught it!", err);
-      });
-  }
-
-  handleClick() {
-    return function () {
-      var data = {
-        chats: [],
-        user1: {
-          id: localStorage.getItem("restaurant_id"),
-          name: localStorage.getItem("email"),
-        },
-        user2: {
-          id: localStorage.getItem("user_id"),
-          name: localStorage.getItem("user_name"),
-        },
-      };
-      axios.defaults.headers.common['authorization'] = localStorage.getItem('token');
-      axios.post("/createMessage", data)
-          .then(response => {
-              console.log("Message Created");
-              window.location = '/rMessages';
-          }
-          ).catch(ex => {
-              alert(ex);
-          });
-      };
-    }
-  
-
-  render() {
-   
-    return (
-      <div>
-      {/* {redirectVar} */}
-      <div>
+  render(){
+      return(
         <div>
-          <Navbar />
-          <div className="container">
-            {this.state.profile.map(userprofile => (
-              <div className="main-div-menu">
-                <div className="panel" />
-                <div>
-                  <button class="ybtn ybtn--primary ybtn--small business-search-form_button" onClick={this.handleClick()}>Message</button>
-                </div>
-                <div>
-                  <h1 className="heading-menu"> Profile</h1>
-                  <div className="container" />
-                  <table>
-                    <thead>
-                      <tr>
-                        <th className="profilepagefont">First Name</th>
-                        <td className="profiletdfont">
-                          <b>
-                            {userprofile.fname}
-                            {' '}
-                          </b>
-                        </td>
-                      </tr>
-                      <tr>
-                        <th className="profilepagefont">Last Name</th>
-                        <td className="profiletdfont">
-                          <b>
-                            {userprofile.lname}
-                            {' '}
-                          </b>
-                        </td>
-                      </tr>
-
-                      <tr>
-                        <th className="profilepagefont"> Profile Image</th>
-                        <td>
-                          <img
-                            src={userprofile.path}
-                            width={200}
-                            height={200}
-                            mode="fit"
-                            alt="description"
-                          />
-                        </td>
-                      </tr>
-
-                      <tr>
-                        <th className="profilepagefont">Email ID</th>
-                        <td className="profiletdfont">{userprofile.Emailid}</td>
-                      </tr>
-                      <tr>
-                        <th className="profilepagefont">City</th>
-                        <td className="profiletdfont">
-                          {userprofile.city}
-                          {' '}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th className="profilepagefont">Zipcode</th>
-                        <td className="profiletdfont">{userprofile.zipcode}</td>
-                      </tr>
-                      <tr>
-                        <th className="profilepagefont">Description</th>
-                        <td className="profiletdfont">
-                          {userprofile.bio}
-                          {' '}
-                        </td>
-                      </tr>
-
-                      <tr>
-                        <th className="profilepagefont">Username</th>
-                        <td className="profiletdfont">
-                          {userprofile.user_name}
-                          {' '}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th className="profilepagefont">Nick Name</th>
-                        <td className="profiletdfont">
-                          {userprofile.nick_name}
-                          {' '}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th className="profilepagefont">Favorites</th>
-                        <td className="profiletdfont">
-                          {userprofile.favorites}
-                          {' '}
-                        </td>
-                      </tr>
-
-                      <tr>
-                        <th className="profilepagefont">Website/MyBlog</th>
-                        <td className="profiletdfont">{userprofile.myblog}</td>
-                      </tr>
-                      <tr>
-                        <th className="profilepagefont">Contact Number</th>
-                        <td className="profiletdfont">
-                          {userprofile.mobile}
-                          {' '}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th className="profilepagefont">Yelping Since</th>
-                        <td className="profiletdfont">
-                        <Moment format="D MMM YYYY">{userprofile.yelpingsince}</Moment>{" "}
-                          {' '}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th className="profilepagefont">Things I love</th>
-                        <td className="profiletdfont">
-                          {userprofile.things_ilove}
-                          {' '}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th className="profilepagefont">Headline</th>
-                        <td className="profiletdfont">
-                          {userprofile.headline}
-                          {' '}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th className="profilepagefont">State</th>
-                        <td className="profiletdfont">
-                          {userprofile.ustate}
-                          {' '}
-                        </td>
-                      </tr>
-                    </thead>
-                    <tbody />
-                  </table>
-                </div>
-              </div>
-            ))}
+          <Navbar/>
+              <div className="body">
+              { this.displayProfile()}
           </div>
         </div>
-      </div>
-    </div>
-  );
+          
+      )
   }
 }
-export default UViewProfileRest;
+const id = localStorage.getItem('restaurant_id')
+
+export default graphql(getProfileQuery, {
+  options: (props) => ({
+    variables: {
+      id: props.id
+    }
+  })
+})(ViewRestUserProfile);
