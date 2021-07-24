@@ -1,4 +1,4 @@
-# Yelp-Lab3
+# Yelp-Grphql
 Yelp prototype using Graphql
 
 
